@@ -1,0 +1,16 @@
+I have a dream to have the JSONArchive available to all OS platforms, 
+and programming languages. 
+Please help grow a new generation by:
+1. Replicating it to other languages
+2. Finding stunning uses for JSONArchive
+3. Solving one of the problems listed in the TODO section
+4. Resuse it in your repositories
+5. Creating softwares to enable OSes use it
+6. Telling a friend or your organization about it.
+7. Help build another public version ( contact: richardmcfriend@live.com if interested )
+8. Adding more TODO.
+
+
+Please I would like a link to any form of addition to the code or TODO, replication to another language,
+redevelopment, success stories, and/or softwares developed for or on JSONArchive. 
+( contact: richardmcfriend@live.com if interested )
