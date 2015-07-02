@@ -1,0 +1,128 @@
+EXAMPLES
+========
+
+
+$fr = new JSON_Archive;
+
+
+// Adding files to the archive
+-------------------------------
+
+$fr->add("file.ext");
+$fr->add("directory/file.ext");
+
+// Setting a password/key to the archive
+------------------------------------------
+
+$fr->setKey("example key");
+
+# You will need to supply this before any read action or write if 
+# the archive is encrypted.
+
+// Adding comments and extra stuffs about the file...
+-------------------------------------------------------
+
+$fr->addComment("This archive consists of two files and requires a password to open it.");
+
+// Adding credits and copyrights to the file...
+-------------------------------------------------------
+
+$fr->setAuthor("My Name");
+
+
+// Compressing files...
+----------------------------------
+
+$fr->compress("outfile" [, true|false]); 
+
+# NOTE: that the file name is optional and does not necessarily
+# ends with the .son extension
+
+# The second optional argument decides if you want compress to
+# output a file (true) or not (false).
+# Default: true
+
+
+// Getting informations about an archive...
+------------------------------------------------
+
+$vm = $fr->getHeder("filename.son");
+$name = $vm["name"];
+
+# NOTE: If a file name is not supplied to getHeader, it naturally assumes
+# we are getting headers of the last file we decompressed 
+# or the file we are trying to compress as the case me seem apropriate. 
+
+# header infos
+# 
+# name, secure, compressedsize, uncompressedsize, totalfiless, created, 
+# compressionlevel, comments and version. Where version is the version of the
+# library that performs the compression. (Might be useful to developers).
+
+
+// Adding an entire directory to the archive
+---------------------------------------------
+
+$fr->addDirectory("example_directory");
+
+
+// Decompressing an archive
+--------------------------------
+
+$fr->decompress("filename.son" [, "to_folder", [true|false]]);
+
+# The third optional argument decides if you want decompress to
+# output a file (true) or not (false).
+# Default: true
+
+
+// Getting information for a file in the archive
+-------------------------------------------------
+
+$v = $fr->getFilesInfo("example.son");
+foreach($v as $key => $value){
+	echo $key.": ".$value;
+}
+
+
+// Getting error returned by the class
+---------------------------------------
+
+$fr->error();
+
+
+// Renaming a file in an archive
+--------------------------------
+
+$fr->rename("filename.son", int fileindex, "newnameoffile");
+
+
+// Deleting a file in an archive
+--------------------------------
+
+$fr->delete("filename.son", int fileindex);
+
+
+NOTE: fileindex can be derived from getFilesInfo.
+# E.g. getFilesInfo("filename")["index"];
+
+
+// Outputing archive JSON
+---------------------------
+
+One of the advantages of JSON Archives is that they can serve as a 
+server/client file exchange manager.
+
+$fr->purify( [true|false] );
+
+Using purify lets you return pure JSON results.
+NOTE: Unless you explicitly define write as true, purify stops the 
+      output stream of compress completely.
+	  
+To return to default, set the an argument false to purify.
+E.g $fr->purify(false);
+
+
+
+// NOTE: [ ] refers to optional fields that may be required in 
+//           certain circumstances.
