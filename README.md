@@ -1,4 +1,4 @@
-# Richard-Mcfriend-s-JSON-Archive
+# Richard Mcfriend's JSON Archive
 A file archive based on the JavaScript Object Notation
 
 1.	High compression ratio.
