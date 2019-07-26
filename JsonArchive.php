@@ -2,50 +2,48 @@
 
 
 /** 
-
-
-
-******************************************************
-
-
-Richard Mcfriend's JSON Archive
-
-================================
-
-An archive based on the JavaScript Object Notation
-
-#JSONDoesMore
-
-Version: 1.0.0
-
-*******************************************************
-
-
-Copyright, 2015
-
-Developed by:
-Richard mcfriend
-richardmcfriend@live.com
-
-for
-
-"The World"
-
-*******************************************************
- 
-/*  
- 
- TODO
- ====
- 
- # Add to archive
- # Change archive key - requires old and new key
- # Add expiry date to archive after which it will no longer open
-   even with a correct key.
- # Extract a single file from an archive.
- # Extend compression level to 16.
- 
-  */
+ * 
+ * 
+ * 
+ * ******************************************************
+ * 
+ * 
+ * Richard Mcfriend's JSON Archive
+ * 
+ * ================================
+ * 
+ * An archive based on the JavaScript Object Notation
+ * 
+ * #JSONDoesMore
+ * 
+ * Version: 1.0.0
+ * 
+ * *******************************************************
+ * 
+ * 
+ * Copyright, 2015
+ * 
+ * Developed by:
+ * Richard mcfriend
+ * richardmcfriend@live.com
+ * 
+ * for
+ * 
+ * "The World"
+ * 
+ * *******************************************************
+ *  
+ * /**  
+ *  * TODO
+ *  * ====
+ *  * 
+ *  * # Add to archive
+ *  * # Change archive key - requires old and new key
+ *  * # Add expiry date to archive after which it will no longer open even with a correct key.
+ *  * # Extract a single file from an archive.
+ *  * # Extend compression level to 16.
+ *  */
+ */
 
 
 // GLOBAL DEFINITIONS
@@ -87,19 +85,19 @@ define("JSON_ARCHIVE_EMPTY_ERROR", "The archive contains no file.");
 define("JSON_ARCHIVE_OUTOFRANGE_EXCEPTION", "The file index supplied is greater that the highest possible file index of the archive.");
 
 
-class JSON_Archive {
+class JsonArchive {
 	
 	
-	// SON Version
+	// JsonArchive Version
 	private $version = "1.0.0";
 	
 	// the file(s) being processed
 	private $files = array();
 	
-	/* 
-	key to the archive if any is supplied
-	Do not mistakenly change it to null. null & "" are different things here.
-	*/
+	/** 
+	 * key to the archive if any is supplied
+	 * Do not mistakenly change it to null. null & "" are different things here.
+	 */
 	private $key = ""; 
 	
 	// compression level (the level of compression)
@@ -159,15 +157,15 @@ class JSON_Archive {
 	// A file name we will use to create temporary files if necessary.
 	protected $dollyfile = "0_0_0___0_0_______0";
 	
-	/* 
-	When purified results are requeste, only JSON results are returned.
-	This is the global variable that determines that.
-	Looking at: Compatiblity, Flexibility, Browser & Platform Support.
-	
-	Note: Unless write is implicitly enabled by a call to a function,
-	a purified result will never return any file
-	
-	Default: false
+	/** 
+	 * When purified results are requeste, only JSON results are returned.
+	 * This is the global variable that determines that.
+	 * Looking at: Compatiblity, Flexibility, Browser & Platform Support.
+	 * 
+	 * Note: Unless write is implicitly enabled by a call to a function,
+	 * a purified result will never return any file
+	 * 
+	 * Default: false
 	 */
 	private $purified = false;
 	
@@ -182,14 +180,14 @@ class JSON_Archive {
 	
 	
 	
-	/* 
-	MAIN METHOD 
-	============
-	For adding a file to the archive.
-	Accepts file and text data. 
-	A name is not necessarily provided for a file as it adds it 
-	using the file's name unless a name is provided.
-	But for text data, a name must be provided.
+	/** 
+	 * MAIN METHOD 
+	 * ============
+	 * For adding a file to the archive.
+	 * Accepts file and text data. 
+	 * A name is not necessarily provided for a file as it adds it 
+	 * using the file's name unless a name is provided.
+	 * But for text data, a name must be provided.
 	 */
 	function add($data, $name = null){
 		
@@ -203,21 +201,15 @@ class JSON_Archive {
 			
 			// If a name is not supplied,
 			if(empty($name)){
-				
 				// set name to the file name.
 				$name = $data;
-				
 			}
 			
 			// Get input from file if not a directory.
 			if(!is_dir($data)){
-				
 				$input = base64_encode((bzcompress(file_get_contents($data))));
-				
 			} else {
-			
 				$input = "";
-			
 			}
 			$size = @filesize($data);
 			$type = @mime_content_type($data);
@@ -230,15 +222,11 @@ class JSON_Archive {
 				
 				// The file may just be empty
 				if($input != ""){
-				
 					// Something is wrong with the file...
 					$this->error[] .= JSON_ARCHIVE_FILEREAD_ERROR;
 					return false;
-				
 				}
-				
 			}
-			
 		} else {
 			
 			// Assume text data is supplied.
@@ -249,14 +237,14 @@ class JSON_Archive {
 				
 				$size = strlen($input);
 				
-				/* 
-				Getting mime type of plain text will alway be string,
-				an empty file will alwaay be x-empty irrespective of what
-				they ought to be.
-				
-				So we hack through with quick file create, get mime type and remove
-				
-				Looking at: Accuracy
+				/** 
+				 * Getting mime type of plain text will alway be string,
+				 * an empty file will alwaay be x-empty irrespective of what
+				 * they ought to be.
+				 * 
+				 * So we hack through with quick file create, get mime type and remove
+				 * 
+				 * Looking at: Accuracy
 				 */
 				
 				// We don't want to guess our dolly cannot be a filename
@@ -287,9 +275,7 @@ class JSON_Archive {
 		
 		// Add to the files list.
 		if($input != ""){
-			
 			array_push($this->files, array("name" => $name, "value" => $input, "size" => $size, "type" => $type, "lastmodified" => $lastmod));
-			
 		}
 		
 		// increment the uncompressed size here...
@@ -302,37 +288,31 @@ class JSON_Archive {
 		
 	}
 	
-	/* 
-	Sets the password or key to the archive.
-	If it is called, anyone or app trying to open 
-	the archive will need to provide the same key to do so
-	
-	Looking at: Security
+	/** 
+	 * Sets the password or key to the archive.
+	 * If it is called, anyone or app trying to open 
+	 * the archive will need to provide the same key to do so
+	 * 
+	 * Looking at: Security
 	 */
 	function setKey($key){
-		
 		$this->key = $key;
-		
 	}
 	
-	/* 
-	This should be called to control if only JSON output should be used or not.
-	@accepts: boolean.
-	@anything else: sets it to false.
+	/** 
+	 * This should be called to control if only JSON output should be used or not.
+	 * @accepts: boolean.
+	 * @anything else: sets it to false.
 	 */
 	function purify($bool = true){
 		
 		// Incase the user forgets or skips the last comment,
 		if(!is_bool($bool)){
-		
 			$bool = false;
-			
 		}
 		
 		// .
-		
 		$this->purified = $bool;
-		
 	}
 	
 	
@@ -340,28 +320,19 @@ class JSON_Archive {
 		
 		// Only printable names...
 		if(is_string($name)){
-			
 			$name = str_replace("/", "", $name);
 			$this->arcname = $name;
-			
 		} else {
-			
 			$error[] .= JSON_ARCHIVE_INVALID_SETNAME;
-			
 		}
-		
 	}
 	
 	// This name will be printed as the author of the archive...
 	function setAuthor($name){
-		
 		// Only printable characters...
 		if(is_string($name)){
-			
 			$this->compressedby = $name;
-			
 		}
-		
 	}
 	
 	
@@ -371,10 +342,8 @@ class JSON_Archive {
 		$level = preg_replace("/\D+/", "", $level);
 		
 		if(empty($level)){
-			
 			// reset level
 			$level = 9;
-			
 		}
 		
 		// reset over & under flow.
@@ -382,48 +351,39 @@ class JSON_Archive {
 		elseif($level > 9) $level = 9;
 		
 		$this->index = $level;
-		
 	}
 	
 	// Adds comment to the file...
 	function addComment($comments){
-		
 		$this->comments = $comments;
-			
 	}
 	
 	// Adds comment to the file...
 	function version(){
-		
 		return $this->version;
-			
 	}
 	
-	/* 
-	MAIN METHOD 
-	============
-	For getting error messages
+	/** 
+	 * MAIN METHOD 
+	 * ============
+	 * For getting error messages
 	 */
 	function error(){
-		
 		// Only if errors exist
 		if(sizeof($this->error) > 0){
-			
 			return $this->error[0];
-		
 		}
 		
-		return false;
-			
+		return false;	
 	}
 	
-	/* 
-	
-	MAIN METHOD
-	===========
-	Makes the archive.
-	If a file name is not specified, it uses the default > SON
-	
+	/** 
+	 * 
+	 * MAIN METHOD
+	 * ===========
+	 * Makes the archive.
+	 * If a file name is not specified, it uses the default > SON
+	 * 
 	 */
 	function compress($outfile = null, $write = true){
 	
@@ -438,18 +398,14 @@ class JSON_Archive {
 		if(empty($this->files))return false;
 		
 		foreach($this->files as $file){
-		
 			$json_encoded = @json_encode($file);
 			
 			// Making sure we don't have invalid files
 			// Looking at: Security
 			// Note to:: Reduce the possibility of "Damaged Archive" by a further 10%.
 			if($json_encoded){
-			
 				array_push($encoded, array($json_encoded));
-				
 			}
-			
 		}
 		
 		$attributes = array(
@@ -497,12 +453,9 @@ class JSON_Archive {
 					// make sure the extension is properly appended
 					if(!substr($outfile, (strlen($outfile) - 5), (strlen($outfile) - 1)) == ".son")$outfile .= ".son";
 					$res = file_put_contents($outfile, $gcompressed);
-					
 				} else {
-					
 					// Output our default file name
 					$res = file_put_contents($this->arcname.".son", $gcompressed);
-				
 				}
 				
 				if(!$res){
@@ -510,47 +463,37 @@ class JSON_Archive {
 					// Something must be wrong!!!
 					$this->error[] .= JSON_ARCHIVE_FILESAVE_FAILED;
 					return false;
-					
 				}
-			
 			}
 			
 			$this->fileheader = @json_decode($header);
 			
 			if($this->purified != true){
-			
 				return $gcompressed;
-			
 			} else {
-			
 				return $to_be_compressed;
-			
 			}
-			
 		} else {
-		
 			return false;
-			
 		}
-		
 	}
 	
-	/* 
-	PROTECTED SUB-METHOD
-	====================
-	Called to decrypt files 
-	performs main decompression!...
-	
-	CAUTION: Edit with caution!!!
+	/** 
+	 * PROTECTED SUB-METHOD
+	 * ====================
+	 * Called to decrypt files 
+	 * performs main decompression!...
+	 * 
+	 * CAUTION: Edit with caution!!!
 	 */
 	protected function predecompress($get){
 		
 		// decompress
 		$gdecompress = gzuncompress($get);
 		
-		/* 
-		# Then decode.
-		While doing this, we must make sure to handle our crc32 correctly
+		/** 
+		 * # Then decode.
+		 * While doing this, we must make sure to handle our crc32 correctly
 		 */
 		 // We don't want to replace "0" in our content.
 		if(crc32($this->key) != 0){
@@ -561,17 +504,14 @@ class JSON_Archive {
 			
 			// First character is crc32.
 			$gdecode = substr(gzdecode($gdecompress), 1, (strlen(gzdecode($gdecompress)) - 1));
-		
 		}
 		
 		// jdecode the content of decompression
 		$have_been_decompressed = @json_decode($gdecode);
 		
 		if(!$have_been_decompressed){
-					
 			$this->error[] .= JSON_ARCHIVE_NOKEY_ERROR;
 			return false;
-		
 		}
 		
 		// get headers
@@ -587,14 +527,14 @@ class JSON_Archive {
 		
 	}
 	
-	/* 
-	MAIN METHOD 
-	============
-	This is the decompression method. It decompresses to file 
-	and headers...
-	
-	The third parameter should be set to false to stop it 
-	from writing to files...
+	/** 
+	 * MAIN METHOD 
+	 * ============
+	 * This is the decompression method. It decompresses to file 
+	 * and headers...
+	 * 
+	 * The third parameter should be set to false to stop it 
+	 * from writing to files...
 	 */
 	function decompress($file, $folder = null, $write = true){
 		
@@ -602,7 +542,6 @@ class JSON_Archive {
 			
 			$this->error[] .= JSON_ARCHIVE_FILEREAD_ERROR;
 			return false;
-			
 		}
 		
 		// let apps know we are decompressing
@@ -616,7 +555,6 @@ class JSON_Archive {
 			
 			$this->error[] .= JSON_ARCHIVE_FILEREAD_ERROR;
 			return false;
-			
 		}
 		
 		// .......
@@ -624,9 +562,7 @@ class JSON_Archive {
 		
 		// Only continue if no error.
 		if(!empty($this->error)){
-			
 			return false;
-			
 		} 
 		
 		$header = $predec[0];
@@ -647,7 +583,6 @@ class JSON_Archive {
 					
 					$this->error[] .= JSON_ARCHIVE_NOKEY_ERROR;
 					return false;
-					
 				} else {
 					
 					// proper hash our key
@@ -658,11 +593,8 @@ class JSON_Archive {
 						
 						$this->error[] .= JSON_ARCHIVE_WRONGKEY_ERROR;
 						return false;
-						
 					}
-					
 				}
-				
 			}
 			
 			// get files
@@ -678,7 +610,6 @@ class JSON_Archive {
 				
 					$this->error[] .= JSON_ARCHIVE_EMPTY_ERROR;
 					return;
-				
 				}
 				
 				$name = $thiscontent->name;
@@ -701,13 +632,11 @@ class JSON_Archive {
 				
 				// array files
 				array_push($pure_files, array(
-					
 					"name" => $name,
 					"size" => $size,
 					"type" => $type,
 					"lastmodified" => $lastmod,
 					"content" => base64_encode($bdecompressed)
-					
 				));
 				
 				if($bdecompressed){
@@ -715,7 +644,6 @@ class JSON_Archive {
 					if($this->purified == false){
 				
 						if($write == true){
-				
 							if(!empty($folder) && is_string($folder)){
 						
 								// if directory does not exists, create it.
@@ -723,14 +651,11 @@ class JSON_Archive {
 						
 									if($write == true)
 										@mkdir($folder, 0777);
-						
 								}
-								
 							} else {
 						
-									// we can't keep null. else it will appear in our file name
+								// we can't keep null. else it will appear in our file name
 								$folder = "";
-					
 							}
 					
 							// our file path 
@@ -752,7 +677,6 @@ class JSON_Archive {
 							
 								// increment start_dir
 								$start_dir .= $namey[$j]."/";
-						
 							}
 				
 					
@@ -767,21 +691,15 @@ class JSON_Archive {
 				
 									$nameg = "";
 									for($l = 0; $l < (count($namex) - 1); $l++){
-					
 										$nameg .= $namex[$l];
-							
-								}
+									}
 						
 									$name = $fullpath.$start_dir.$nameg." - ( SON renamed )".".".$namex[count($namex) - 1];
-						
 								}
-					
 								else $name = $namex[0];
-						
 							} else {
 					
 								$name = $fullpath.$start_dir.$namez;
-					
 							}
 				
 				// if($bdecompressed){
@@ -795,7 +713,6 @@ class JSON_Archive {
 					
 								$this->error[] .= JSON_ARCHIVE_HALTED_DECOMPRESSION;
 								return false;
-					
 							}
 				
 					// } else {
@@ -828,7 +745,6 @@ class JSON_Archive {
 					
 					$this->error[] .= JSON_ARCHIVE_HALTED_DECOMPRESSION;
 					return false;
-					
 				}
 			
 			} /* else {
@@ -842,29 +758,23 @@ class JSON_Archive {
 	
 			$this->error[] .= JSON_ARCHIVE_CHECKSUM_FAILED;
 			return false;
-		
 		}
 		
 		if($this->purified == true){
-		
 			return @json_encode($pure_files);
-		
 		} else {
-		
 			return $pure_files;
-		
 		}
-		
 	}
 	
-	/* 
-	MAIN METHOD
-	==============
-	This is the main method that should be called tto get any information
-	about an archive.
-	
-	It is not necessarily passed a file if it is just to get informations
-	about the archive we are about to compress.
+	/** 
+	 * MAIN METHOD
+	 * ==============
+	 * This is the main method that should be called tto get any information
+	 * about an archive.
+	 * 
+	 * It is not necessarily passed a file if it is just to get informations
+	 * about the archive we are about to compress.
 	 */
 	function getHeader($file = null){
 		
@@ -873,47 +783,36 @@ class JSON_Archive {
 		
 			// we assume the decompressed file...
 			$header = $this->fileheader;
-		
 		} elseif($this->decompressing == false && empty($file)){
 		
 			if(!empty($this->fileheader)){
-				
 				// we assume the decompressed file...
 				$header = $this->fileheader;
-				
 			}
-		
 		} else {
-			
 			// we need a file.
 			if(!file_exists($file) || empty($file)){
 			
 				$this->error[] .= JSON_ARCHIVE_FILEREAD_ERROR;
 				return false;
-			
 			}
 			
 			$get = @file_get_contents($file);
 			
 			// make sure file is readable.
 			if(!$get){
-				
 				$this->error[] .= JSON_ARCHIVE_FILEREAD_ERROR;
 				return false;
-				
 			}
 			
 			$decoded = $this->predecompress($get);
 		
 			// Only continue if no error.
 			if(!empty($this->error)){
-			
 				return false;
-			
 			} 
 			
 			$header = @json_decode($decoded[0]);
-		
 		}
 		
 		if(!empty($header)){
@@ -923,10 +822,8 @@ class JSON_Archive {
 			if(!empty($header->key)){
 				
 				if(empty($this->key)){
-					
 					$this->error[] .= JSON_ARCHIVE_NOKEY_ERROR;
 					return false;
-					
 				} else {
 					
 					// proper hash our key
@@ -937,11 +834,8 @@ class JSON_Archive {
 						
 						$this->error[] .= JSON_ARCHIVE_WRONGKEY_ERROR;
 						return false;
-						
 					}
-					
 				}
-				
 			}
 			
 			$return_header = array(
@@ -958,30 +852,22 @@ class JSON_Archive {
 			);
 				
 			if($this->purified == false){	
-				
 				// return Array
 				return $return_header;
-			
 			} else {
-				
 				// return JSON
 				return @json_encode($return_header);
-			
 			}
-			
 		} else {
-			
 			return false;
-			
 		}
-		
 	}
 	
 	
-	/* 
-	MAIN METHOD 
-	===========
-	Called to archive an entire directory/folder.
+	/** 
+	 * MAIN METHOD 
+	 * ===========
+	 * Called to archive an entire directory/folder.
 	 */
 	function addDirectory($dir = null){
 	
@@ -991,7 +877,6 @@ class JSON_Archive {
 			
 			$this->error[] .= JSON_ARCHIVE_INVALID_DIRECTORY;
 			return false;
-			
 		}
 		
 		// Thanks to php.net
@@ -1004,7 +889,6 @@ class JSON_Archive {
 			// Uncomment the next line to exclude hidden and or damaged files.
 			//if(is_readable($name))
 				$this->add($name);
-			
 		}
 	
 	}
@@ -1019,7 +903,6 @@ class JSON_Archive {
 			// Ouch!
 			$this->error[] .= JSON_ARCHIVE_FILEREAD_ERROR;
 			return false;
-			
 		}
 		
 		// We must still decompress our archive.
@@ -1030,7 +913,6 @@ class JSON_Archive {
 		if(!empty($this->error)){
 			
 			return false;
-			
 		}
 		
 		if($description){
@@ -1043,11 +925,9 @@ class JSON_Archive {
 			$contents =	$this->filecontents;
 			
 			if(sizeof($names)!=sizeof($sizes)){
-				
 				// We have a malformed archive...
 				$this->error[] .= JSON_ARCHIVE_MALFORMED;
 				return false;
-			
 			}
 			
 			$return = array();
@@ -1055,65 +935,51 @@ class JSON_Archive {
 			for($i = 0; $i < sizeof($names); $i++){
 			
 				array_push( $return,
-				
 					array(
-					
 						"index" => $i,
 						"name" => $names[$i],
 						"size" => $sizes[$i],
 						"type" => $types[$i],
 						"lastmodified" => $lastmods[$i],
 						"content" => $contents[$i]
-					
 					)
-				
 				);
-			
 			}
 			
 			if($this->purified == false){
 			
 				// return Array
 				return $return;
-			
 			} else {
 			
 				// return JSON 
 				return @json_encode($return);
-			
 			}
 		
 		} else {
-		
 			return false;
-		
 		}
-	
 	}
 	
-	/* 
-	MAIN METHOD 
-	===========
-	Called to rename a file in an archive.
+	/** 
+	 * MAIN METHOD 
+	 * ===========
+	 * Called to rename a file in an archive.
 	 */
 	function rename($file = null, $index = null, $newname = null){
 		
 		// We need a file,
 		if(!file_exists($file)){
-			
 			// Ouch!
 			$this->error[] .= JSON_ARCHIVE_FILEREAD_ERROR;
 			return false;
-			
 		}
 		
 		// an index
 		if(!is_numeric($index)){
-		
 			// No way!
 			$this->error[] .= JSON_ARCHIVE_WRONGINDEX_ERROR;
 			return false;
-		
 		}
 		
 		// and a name to start.
@@ -1123,20 +989,20 @@ class JSON_Archive {
 			// No way!
 			$this->error[] .= JSON_ARCHIVE_NONEWNAME_ERROR;
 			return false;
-		
 		}
 		
-		/* 
-		#  We'll keep this out for now to allow the possibility of moving files.
-		#  Uncomment it to restrict moving of files
-		// Make sure our new name is safe..
-		if(preg_match("/\\|\//", $newname)){
-		
-			// No way!
-			$this->error[] .= JSON_ARCHIVE_NONEWNAME_ERROR;
-			return false;
-		
-		} */
+		/** 
+		 * #  We'll keep this out for now to allow the possibility of moving files.
+		 * #  Uncomment it to restrict moving of files
+		 * // Make sure our new name is safe..
+		 * if(preg_match("/\\|\//", $newname)){
+		 * 
+		 * 	// No way!
+		 * 	$this->error[] .= JSON_ARCHIVE_NONEWNAME_ERROR;
+		 * 	return false;
+		 * 
+		 * } 
+		 */
 		
 		// Looking at: Purified
 		if($this->purified != true){
@@ -1146,41 +1012,31 @@ class JSON_Archive {
 		
 				$this->error[] .= JSON_ARCHIVE_EMPTY_ERROR;
 				return false;
-		
 			}
-		
 		} else {
-			
 			// Go to unpurified state
 			$header_info = @json_decode($this->getHeader($file));
 			
 			// Check total files fom header.
 			if($header_info->totalfiles < 1){
-		
 				$this->error[] .= JSON_ARCHIVE_EMPTY_ERROR;
 				return false;
-		
 			}
-		
 		}
 		
 		$get = @file_get_contents($file);
 			
 		// make sure file is readable.
 		if(!$get){
-			
 			$this->error[] .= JSON_ARCHIVE_FILEREAD_ERROR;
 			return false;
-			
 		}
 			
 		$decoded = $this->predecompress($get);
 		
 		// Only continue if no error.
 		if(!empty($this->error)){
-			
 			return false;
-			
 		}
 			
 		$header = $decoded[0];
@@ -1197,7 +1053,6 @@ class JSON_Archive {
 			
 			$this->error[] .= JSON_ARCHIVE_OUTOFRANGE_EXCEPTION;
 			return false;
-			
 		}
 		
 		// $rebinded = array(); # useless
@@ -1211,7 +1066,6 @@ class JSON_Archive {
 			$thiscontent = @json_decode($thisfile);
 				
 			if($i != $index){
-			
 				$name = $thiscontent->name;
 				$value = $thiscontent->value;
 				$size = $thiscontent->size;
@@ -1222,7 +1076,6 @@ class JSON_Archive {
 				array_push($this->files, array("name" => $name, "value" => $value, "size" => $size, "type" => $type, "lastmodified" => $lastmod));
 				
 				$this->uncompressed += $size;
-				
 			} else {
 				
 				// Looking ahead: delete
@@ -1238,38 +1091,28 @@ class JSON_Archive {
 					array_push($this->files, array("name" => $name, "value" => $value, "size" => $size, "type" => $type, "lastmodified" => $lastmod));
 					
 					$this->uncompressed += $size;
-				
 				} else {
-				
 					array_push($this->files, array());
-				
 				}
-			
 			}
-			
-		
 		}
 		
 		$finalize = $this->compress($file, $file);
 		
 		if(!$finalize){
-			
 			return false;
-		
 		}
 		
 		// Looking at: Purified state
 		return $finalize;
-		
-	
 	}
 	
-	/* 
-	MAIN METHOD 
-	===========
-	Called to delete a file in an archive.
-	The delete function is simply an enhanced rename function.
-	It renames a file to null. Striping it out of the archive.
+	/** 
+	 * MAIN METHOD 
+	 * ===========
+	 * Called to delete a file in an archive.
+	 * The delete function is simply an enhanced rename function.
+	 * It renames a file to null. Striping it out of the archive.
 	 */
 	function delete($file = null, $index = null){
 		
@@ -1282,23 +1125,16 @@ class JSON_Archive {
 		$this->deleting = false;
 		
 		if(!$call){
-		
 			$this->error[] .= JSON_ARCHIVE_DELETE_ERROR;
 			return false;
-		
 		}
 		
 		return $call;
-	
 	}
-	
-	
-	
-	
 }
 
 
-// $h = new JSON_Archive;
+// $h = new JsonArchive;
 // $h->add("favicon.ico");
 // $h->addDirectory("n1");
 // $h->setKey("hello");
@@ -1316,7 +1152,7 @@ class JSON_Archive {
 // Testing
 ==========
 
-// $h = new JSON_Archive;
+// $h = new JsonArchive;
 // $h->add("favicon.ico");
 // $h->setKey("hello");
 // $h->purify();
